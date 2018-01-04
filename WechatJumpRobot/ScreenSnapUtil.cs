@@ -10,7 +10,7 @@ using System.Text;
 namespace WechatJumpRobot
 {
 
-    class ScreenSnapUtil
+    public static class ScreenSnapUtil
     {
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern IntPtr GetForegroundWindow();
@@ -30,18 +30,43 @@ namespace WechatJumpRobot
 
         [DllImport("user32.dll", EntryPoint = "FindWindow")]
         private extern static IntPtr FindWindow(string lpClassName, string lpWindowName);
-
+        [DllImport("User32.dll", EntryPoint = "FindWindowEx")]
+        public static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpClassName, string lpWindowName);
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern bool SwitchToThisWindow(IntPtr hWnd, bool fAltTab);
-
-        public void test()
+        [DllImport("user32")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        //IMPORTANT : LPARAM  must be a pointer (InterPtr) in VS2005, otherwise an exception will be thrown
+        private static extern bool EnumChildWindows(IntPtr window, EnumWindowProc callback, IntPtr i);
+        //the callback function for the EnumChildWindows
+        private delegate bool EnumWindowProc(IntPtr hWnd, IntPtr parameter);
+        public static Bitmap Snap(string Title)
         {
-            IntPtr hWnd = FindWindow(null, "ecg.txt - 记事本");
-            //ShowWindow(hWnd, 1);
-            SwitchToThisWindow(hWnd, true);
+            //IntPtr hWnd = FindWindow(null, "ecg.txt - 记事本");
+            IntPtr hWnd = FindWindowEx(IntPtr.Zero, IntPtr.Zero, "CHWindow", Title);
+            IntPtr hWnd1 = FindWindowEx(hWnd, IntPtr.Zero, "CHWindow", null);
+            //while (hWnd1!=IntPtr.Zero)
+            //{
+            //    RECT rc2 = new RECT();
+            //    GetWindowRect(hWnd1, ref rc2);
+            //    Console.WriteLine("{0},{1}",hWnd1,rc2.Left);
+            //    hWnd1 = FindWindowEx(hWnd, hWnd1, "CHWindow", null);
+            //}
+            //hWnd1 = FindWindowEx(hWnd, hWnd1, "CHWindow", null);
+            //hWnd1 = FindWindowEx(hWnd, hWnd1, "CHWindow", null);
+            //hWnd1 = FindWindowEx(hWnd, hWnd1, "CHWindow", null);
+            //hWnd1 = FindWindowEx(hWnd, hWnd1, "CHWindow", null);
+            //hWnd1 = FindWindowEx(hWnd, hWnd1, "CHWindow", null);
+            //hWnd1 = FindWindowEx(hWnd, hWnd1, "CHWindow", null);
+            //hWnd1 = FindWindowEx(hWnd, hWnd1, "CHWindow", null);
+            if (hWnd1 == IntPtr.Zero)
+            {
+                return null;
+            }
+            SwitchToThisWindow(hWnd1, true);
 
             RECT rc = new RECT();
-            GetWindowRect(hWnd, ref rc);
+            GetWindowRect(hWnd1, ref rc);
             int width = rc.Right - rc.Left;                        //窗口的宽度
             int height = rc.Bottom - rc.Top;                   //窗口的高度
             int x = rc.Left;
@@ -57,8 +82,9 @@ namespace WechatJumpRobot
             }
 
             //保存
-            image.Save(name, ImageFormat.Jpeg);
+            //image.Save(name, ImageFormat.Jpeg);
             imgGraphics.Dispose();
+            return image;
         }
     }
 }
