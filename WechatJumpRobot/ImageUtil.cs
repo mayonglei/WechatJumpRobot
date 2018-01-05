@@ -55,9 +55,17 @@ namespace WechatJumpRobot
                 Console.WriteLine("p3:{0}", _p3.Value);
             }
 
-            if (null != _p2 && null != _p3)
+            if (null != _p1 && null != _p2 && null != _p3)
             {
-                return new Point((_p2.Value.X + _p3.Value.X) / 2, (_p2.Value.Y + _p3.Value.Y) / 2);
+                if (Math.Abs((_p2.Value.X + _p3.Value.X) / 2 - _p1.Value.X) <= 20)
+                {
+                    return new Point((_p2.Value.X + _p3.Value.X) / 2, (_p2.Value.Y + _p3.Value.Y) / 2);
+                }
+                else
+                {
+                    return new Point(_p1.Value.X, (_p2.Value.Y + _p3.Value.Y) / 2);
+                }
+
             }
             return new Point(-1, -1);
         }

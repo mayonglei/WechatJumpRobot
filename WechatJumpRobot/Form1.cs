@@ -68,7 +68,7 @@ namespace WechatJumpRobot
 
         private void button4_Click(object sender, EventArgs e)
         {
-            string[] _files = Directory.GetFiles(@"\\VBOXSVR\mayonglei\Desktop\RDPShare\微信跳一跳截图");
+            string[] _files = Directory.GetFiles(@"\\VBOXSVR\mayonglei\Desktop\RDPShare\微信跳一跳截图", "*.png");
             for (int i = 0; i < _files.Length; i++)
             {
                 using (Bitmap bmp = new Bitmap(_files[i]))
