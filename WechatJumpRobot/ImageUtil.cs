@@ -29,7 +29,7 @@ namespace WechatJumpRobot
                         Console.WriteLine("{0},{1}", _cBack, _avg);
                         _p1 = new Point(x, y);
                     }
-                    if (Math.Abs(_avg - 145) <= 5 && null == _p2)
+                    if (Math.Abs(_avg - 145) <= 5 && IsGray(_color) && null == _p2)
                     {
                         Console.WriteLine("{0}", _avg);
                         _p2 = new Point(x, y);
@@ -67,7 +67,13 @@ namespace WechatJumpRobot
             {
                 return GetNextCenter(_bmp);
             }
-        
+
+        }
+
+        private static bool IsGray(Color c)
+        {
+            int _avg = (c.R + c.G + c.B) / 3;
+            return Math.Abs(c.R - _avg) <= 10 && Math.Abs(c.G - _avg) <= 10 && Math.Abs(c.B - _avg) <= 10;
         }
     }
 }

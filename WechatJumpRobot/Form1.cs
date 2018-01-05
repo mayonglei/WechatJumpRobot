@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
+using System.IO;
 using System.Windows.Forms;
 
 namespace WechatJumpRobot
@@ -19,7 +20,7 @@ namespace WechatJumpRobot
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Point p = ImageUtil.GetNextCenter(@"C:\Users\MYL\Desktop\Jump4.png");
+            Point p = ImageUtil.GetNextCenter(@"\\VBOXSVR\mayonglei\Desktop\RDPShare\微信跳一跳截图\IMG_1265.PNG");
             Console.WriteLine("center:{0}", p);
         }
 
@@ -63,6 +64,34 @@ namespace WechatJumpRobot
                 this.pictureBox1.Image = (Image)bmp.Clone();
                 Console.WriteLine(p);
             }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            string[] _files = Directory.GetFiles(@"\\VBOXSVR\mayonglei\Desktop\RDPShare\微信跳一跳截图");
+            for (int i = 0; i < _files.Length; i++)
+            {
+                using (Bitmap bmp = new Bitmap(_files[i]))
+                {
+                    if (null == bmp)
+                    {
+                        return;
+                    }
+                    Point p = ImageUtil.GetNextCenter(bmp);
+                    if (p.X < 0 || p.Y < 0)
+                    {
+                        return;
+                    }
+                    using (Graphics g = Graphics.FromImage(bmp))
+                    {
+                        Pen pen = new Pen(Color.Red);
+                        g.DrawEllipse(pen, p.X, p.Y, 20, 20);
+                    }
+                    string _newFile = Directory.GetParent(_files[i]) + @"\new_" + Path.GetFileName(_files[i]);
+                    bmp.Save(_newFile, ImageFormat.Png);
+                }
+            }
+            Console.WriteLine("finish");
         }
     }
 }
